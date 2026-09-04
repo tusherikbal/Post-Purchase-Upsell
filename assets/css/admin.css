@@ -1,0 +1,14 @@
+.pp-upsell-meta-box .form-field {
+	margin-bottom: 16px;
+}
+
+.pp-upsell-meta-box .form-field label {
+	font-weight: 600;
+	display: inline-block;
+	margin-bottom: 4px;
+}
+
+.pp-upsell-meta-box .description {
+	color: #666;
+	font-style: italic;
+}

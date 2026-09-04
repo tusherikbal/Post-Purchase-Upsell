@@ -1,0 +1,129 @@
+.pp-upsell-offer-page {
+	margin: 0;
+	padding: 0;
+	background: #f4f4f5;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+	color: #1f2328;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+}
+
+.pp-upsell-offer {
+	width: 100%;
+	max-width: 560px;
+	padding: 24px;
+	box-sizing: border-box;
+}
+
+.pp-upsell-offer__card {
+	background: #fff;
+	border-radius: 12px;
+	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+	padding: 32px;
+	text-align: center;
+}
+
+.pp-upsell-offer__eyebrow {
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	font-size: 12px;
+	font-weight: 700;
+	color: #d9480f;
+	margin: 0 0 8px;
+}
+
+.pp-upsell-offer__title {
+	font-size: 26px;
+	margin: 0 0 24px;
+}
+
+.pp-upsell-offer__product {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	text-align: left;
+	background: #f9fafb;
+	border-radius: 10px;
+	padding: 16px;
+	margin-bottom: 24px;
+}
+
+.pp-upsell-offer__image img {
+	width: 100px;
+	height: 100px;
+	object-fit: cover;
+	border-radius: 8px;
+	display: block;
+}
+
+.pp-upsell-offer__name {
+	font-size: 18px;
+	margin: 0 0 8px;
+}
+
+.pp-upsell-offer__price-regular {
+	text-decoration: line-through;
+	color: #8a8f98;
+	margin-right: 8px;
+}
+
+.pp-upsell-offer__price-final {
+	font-size: 20px;
+	font-weight: 700;
+	color: #1a7f37;
+}
+
+.pp-upsell-offer__excerpt {
+	font-size: 13px;
+	color: #57606a;
+	margin-top: 8px;
+}
+
+.pp-upsell-offer__actions {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-bottom: 16px;
+}
+
+.pp-upsell-offer__accept,
+.pp-upsell-offer__decline {
+	font-size: 16px;
+	padding: 14px 20px;
+	border-radius: 8px;
+	border: none;
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.pp-upsell-offer__accept {
+	background: #1a7f37;
+	color: #fff;
+}
+
+.pp-upsell-offer__accept:disabled,
+.pp-upsell-offer__decline:disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+.pp-upsell-offer__decline {
+	background: transparent;
+	color: #57606a;
+	text-decoration: underline;
+}
+
+.pp-upsell-offer__note {
+	font-size: 12px;
+	color: #8a8f98;
+	margin: 0 0 4px;
+}
+
+.pp-upsell-offer__status {
+	font-size: 13px;
+	min-height: 18px;
+	color: #d9480f;
+	margin: 0;
+}
