@@ -122,9 +122,26 @@ final class PP_Upsell_Main {
 		require_once PP_UPSELL_DIR . 'includes/class-pp-upsell-attempts-repository.php';
 		require_once PP_UPSELL_DIR . 'includes/class-pp-upsell-offer-page.php';
 		require_once PP_UPSELL_DIR . 'includes/class-pp-upsell-redirect-controller.php';
+		require_once PP_UPSELL_DIR . 'includes/class-pp-upsell-popup-renderer.php';
 		require_once PP_UPSELL_DIR . 'includes/class-pp-upsell-order-manager.php';
 		require_once PP_UPSELL_DIR . 'includes/class-pp-upsell-payment-handler.php';
 		require_once PP_UPSELL_DIR . 'includes/class-pp-upsell-ajax.php';
+		require_once PP_UPSELL_DIR . 'includes/class-pp-orderbump-repository.php';
+		require_once PP_UPSELL_DIR . 'includes/class-pp-orderbump-cpt.php';
+		require_once PP_UPSELL_DIR . 'includes/class-pp-orderbump-frontend.php';
+		require_once PP_UPSELL_DIR . 'includes/class-pp-upsell-analytics.php';
+
+		// The Blocks-checkout integration implements a WooCommerce Blocks
+		// interface at class-declaration time, so it's only require_once'd
+		// once that interface is confirmed present -- guards against very
+		// old WooCommerce versions that predate Blocks being bundled in core.
+		if ( interface_exists( '\Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface' ) ) {
+			require_once PP_UPSELL_DIR . 'includes/class-pp-orderbump-blocks.php';
+		}
+
+		if ( is_admin() ) {
+			require_once PP_UPSELL_DIR . 'includes/class-pp-upsell-analytics-admin.php';
+		}
 	}
 
 	/**
@@ -142,11 +159,19 @@ final class PP_Upsell_Main {
 
 		new PP_Upsell_CPT();
 		new PP_Upsell_Redirect_Controller();
+		new PP_Upsell_Popup_Renderer();
 		new PP_Upsell_Payment_Handler();
 		new PP_Upsell_Ajax();
+		new PP_Upsell_OrderBump_CPT();
+		new PP_Upsell_OrderBump_Frontend();
+
+		if ( class_exists( 'PP_Upsell_OrderBump_Blocks' ) ) {
+			new PP_Upsell_OrderBump_Blocks();
+		}
 
 		if ( is_admin() ) {
 			new PP_Upsell_Admin();
+			new PP_Upsell_Analytics_Admin();
 		}
 	}
 

@@ -79,6 +79,27 @@ class PP_Upsell_Attempts_Repository {
 	}
 
 	/**
+	 * Fetch the most recent pending attempt for an order -- used by the
+	 * popup display mode, which renders on the real Thank You page
+	 * (identified by order id) instead of a separate URL carrying the
+	 * attempt id/token.
+	 *
+	 * @param int $order_id Order id.
+	 * @return object|null
+	 */
+	public static function get_pending_by_order( $order_id ) {
+		global $wpdb;
+
+		return $wpdb->get_row(
+			$wpdb->prepare(
+				'SELECT * FROM ' . self::table() . ' WHERE order_id = %d AND status = %s ORDER BY id DESC LIMIT 1',
+				$order_id,
+				'pending'
+			)
+		);
+	}
+
+	/**
 	 * Record the first view of the offer page (idempotent -- only sets
 	 * viewed_at once).
 	 *

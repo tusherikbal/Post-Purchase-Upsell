@@ -87,10 +87,13 @@ class PP_Upsell_Admin {
 
 		$ttl = isset( $input['offer_link_ttl_minutes'] ) ? absint( $input['offer_link_ttl_minutes'] ) : 60;
 
+		$display_mode = isset( $input['display_mode'] ) && 'popup' === $input['display_mode'] ? 'popup' : 'page';
+
 		return array(
 			'offer_link_ttl_minutes'   => max( 1, $ttl ),
 			'delete_data_on_uninstall' => ! empty( $input['delete_data_on_uninstall'] ),
 			'allow_cod_upsell'         => ! empty( $input['allow_cod_upsell'] ),
+			'display_mode'             => $display_mode,
 		);
 	}
 
@@ -104,6 +107,7 @@ class PP_Upsell_Admin {
 				'offer_link_ttl_minutes'   => 60,
 				'delete_data_on_uninstall' => false,
 				'allow_cod_upsell'         => false,
+				'display_mode'             => 'page',
 			)
 		);
 		?>
@@ -121,6 +125,18 @@ class PP_Upsell_Admin {
 								name="<?php echo esc_attr( PP_Upsell_Main::OPTION_KEY ); ?>[offer_link_ttl_minutes]"
 								value="<?php echo esc_attr( $settings['offer_link_ttl_minutes'] ); ?>" class="small-text" />
 							<p class="description"><?php esc_html_e( 'How long a post-purchase offer link stays valid before it expires.', 'post-purchase-upsell' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label for="pp_display_mode"><?php esc_html_e( 'Offer display style', 'post-purchase-upsell' ); ?></label>
+						</th>
+						<td>
+							<select id="pp_display_mode" name="<?php echo esc_attr( PP_Upsell_Main::OPTION_KEY ); ?>[display_mode]">
+								<option value="page" <?php selected( $settings['display_mode'], 'page' ); ?>><?php esc_html_e( 'Full page (customer is redirected to a dedicated offer page)', 'post-purchase-upsell' ); ?></option>
+								<option value="popup" <?php selected( $settings['display_mode'], 'popup' ); ?>><?php esc_html_e( 'Popup (shown on top of the real Thank You page, no redirect)', 'post-purchase-upsell' ); ?></option>
+							</select>
+							<p class="description"><?php esc_html_e( 'Popup mode keeps the customer on your normal Thank You page and shows the offer as an overlay instead of sending them to a separate page.', 'post-purchase-upsell' ); ?></p>
 						</td>
 					</tr>
 					<tr>
@@ -163,6 +179,7 @@ class PP_Upsell_Admin {
 
 		wp_enqueue_style( 'woocommerce_admin_styles' );
 		wp_enqueue_script( 'wc-enhanced-select' );
+		wp_enqueue_style( 'wp-color-picker' );
 
 		wp_enqueue_style(
 			'pp-upsell-admin',
@@ -174,7 +191,7 @@ class PP_Upsell_Admin {
 		wp_enqueue_script(
 			'pp-upsell-admin',
 			PP_UPSELL_URL . 'assets/js/admin.js',
-			array( 'jquery', 'wc-enhanced-select' ),
+			array( 'jquery', 'wc-enhanced-select', 'wp-color-picker' ),
 			PP_Upsell_Main::VERSION,
 			true
 		);

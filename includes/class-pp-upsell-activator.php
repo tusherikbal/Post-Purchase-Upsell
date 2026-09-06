@@ -28,6 +28,7 @@ class PP_Upsell_Activator {
 			'offer_link_ttl_minutes'   => 60,
 			'delete_data_on_uninstall' => false,
 			'allow_cod_upsell'         => false,
+			'display_mode'             => 'page',
 		);
 
 		add_option( PP_Upsell_Main::OPTION_KEY, $defaults );

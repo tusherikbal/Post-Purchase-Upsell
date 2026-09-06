@@ -12,3 +12,182 @@
 	color: #666;
 	font-style: italic;
 }
+
+.pp-upsell-meta-box h3 {
+	margin-top: 24px;
+	padding-top: 16px;
+	border-top: 1px solid #dcdcde;
+}
+
+.pp-upsell-stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin: 20px 0;
+}
+
+.pp-upsell-stat {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	padding: 16px 20px;
+	min-width: 120px;
+}
+
+.pp-upsell-stat--warning {
+	border-color: #d9480f;
+}
+
+.pp-upsell-stat__value {
+	display: block;
+	font-size: 24px;
+	font-weight: 700;
+	color: #1f2328;
+}
+
+.pp-upsell-stat__label {
+	display: block;
+	font-size: 12px;
+	color: #666;
+	margin-top: 4px;
+}
+
+.pp-upsell-chart-wrap {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	padding: 16px;
+	max-width: 800px;
+}
+
+.pp-color-field {
+	width: 90px !important;
+}
+
+.pp-upsell-preview-tabs {
+	display: flex;
+	gap: 4px;
+	margin-bottom: 8px;
+}
+
+.pp-upsell-preview-tab {
+	flex: 1;
+	background: #f0f0f1;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 6px 8px;
+	font-size: 12px;
+	cursor: pointer;
+}
+
+.pp-upsell-preview-tab.is-active {
+	background: #2271b1;
+	border-color: #2271b1;
+	color: #fff;
+	font-weight: 600;
+}
+
+.pp-upsell-preview-context {
+	border-radius: 6px;
+	padding: 16px;
+}
+
+.pp-upsell-preview-context--popup {
+	background: #40464d;
+}
+
+.pp-upsell-preview-context--page {
+	background: #f6f7f7;
+}
+
+.pp-upsell-preview {
+	background: #fff;
+	border: none;
+	border-radius: 6px;
+	padding: 16px;
+	text-align: center;
+	box-shadow: 0 4px 16px rgba( 0, 0, 0, 0.15 );
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.pp-upsell-preview__eyebrow {
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	font-size: 10px;
+	font-weight: 700;
+	color: #d9480f;
+	margin: 0 0 4px;
+}
+
+.pp-upsell-preview__headline {
+	font-size: 14px;
+	font-weight: 600;
+	margin: 0 0 12px;
+	color: #1f2328;
+}
+
+.pp-upsell-preview__product {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	text-align: left;
+	background: #fff;
+	border-radius: 6px;
+	padding: 8px;
+	margin-bottom: 12px;
+}
+
+.pp-upsell-preview__thumb {
+	width: 36px;
+	height: 36px;
+	background: #e2e4e7;
+	border-radius: 4px;
+	flex-shrink: 0;
+}
+
+.pp-upsell-preview__name {
+	font-size: 12px;
+	font-weight: 600;
+	color: #1f2328;
+}
+
+.pp-upsell-preview__price-regular {
+	text-decoration: line-through;
+	color: #8a8f98;
+	font-size: 11px;
+	margin-right: 4px;
+}
+
+.pp-upsell-preview__price-final {
+	font-size: 13px;
+	font-weight: 700;
+	color: var( --pp-accent, #1a7f37 );
+}
+
+.pp-upsell-preview__accept {
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	background: var( --pp-accent, #1a7f37 );
+	color: var( --pp-accent-text, #fff );
+	border: none;
+	border-radius: 6px;
+	padding: 8px 10px;
+	font-size: 12px;
+	font-weight: 600;
+	margin-bottom: 8px;
+	cursor: default;
+}
+
+.pp-upsell-preview__decline {
+	font-size: 12px;
+	color: #57606a;
+	text-decoration: underline;
+	margin: 0 0 8px;
+}
+
+.pp-upsell-preview__note {
+	font-size: 10px;
+	color: #8a8f98;
+	margin: 0;
+}

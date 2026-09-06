@@ -152,6 +152,14 @@ class PP_Upsell_Redirect_Controller {
 			return $url;
 		}
 
+		if ( 'popup' === self::get_display_mode( $settings ) ) {
+			// Popup mode doesn't redirect at all -- the customer goes to the
+			// real thank-you page as normal, and PP_Upsell_Popup_Renderer
+			// looks up this same pending attempt by order id and renders a
+			// modal on top of that page instead.
+			return $url;
+		}
+
 		return add_query_arg(
 			array(
 				self::QV_ID    => $attempt_id,
@@ -159,6 +167,14 @@ class PP_Upsell_Redirect_Controller {
 			),
 			home_url( '/' )
 		);
+	}
+
+	/**
+	 * @param array $settings Plugin settings option.
+	 * @return string 'page' or 'popup'.
+	 */
+	public static function get_display_mode( array $settings ) {
+		return isset( $settings['display_mode'] ) && 'popup' === $settings['display_mode'] ? 'popup' : 'page';
 	}
 
 	/**

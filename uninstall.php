@@ -21,17 +21,17 @@ if ( empty( $pp_upsell_settings['delete_data_on_uninstall'] ) ) {
 
 global $wpdb;
 
-$pp_upsell_offer_ids = get_posts(
+$pp_upsell_post_ids = get_posts(
 	array(
-		'post_type'      => 'pp_upsell_offer',
+		'post_type'      => array( 'pp_upsell_offer', 'pp_order_bump' ),
 		'post_status'    => 'any',
 		'numberposts'    => -1,
 		'fields'         => 'ids',
 	)
 );
 
-foreach ( $pp_upsell_offer_ids as $pp_upsell_offer_id ) {
-	wp_delete_post( $pp_upsell_offer_id, true );
+foreach ( $pp_upsell_post_ids as $pp_upsell_post_id ) {
+	wp_delete_post( $pp_upsell_post_id, true );
 }
 
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}pp_upsell_attempts" );

@@ -68,19 +68,42 @@ class PP_Upsell_CPT {
 		add_meta_box(
 			'pp_upsell_offer_details',
 			__( 'Offer Details', 'post-purchase-upsell' ),
-			array( $this, 'render_meta_box' ),
+			array( $this, 'render_details_meta_box' ),
 			self::POST_TYPE,
 			'normal',
 			'high'
 		);
+
+		add_meta_box(
+			'pp_upsell_offer_appearance',
+			__( 'Offer Page Text & Colors', 'post-purchase-upsell' ),
+			array( $this, 'render_appearance_meta_box' ),
+			self::POST_TYPE,
+			'normal',
+			'default'
+		);
+
+		// 'default' priority in the 'side' context renders right after core's
+		// own Publish box (which uses 'core' priority) -- so this appears
+		// directly below Publish, as a live mirror of the meta box fields.
+		add_meta_box(
+			'pp_upsell_offer_preview',
+			__( 'Offer Preview', 'post-purchase-upsell' ),
+			array( $this, 'render_preview_meta_box' ),
+			self::POST_TYPE,
+			'side',
+			'default'
+		);
 	}
 
 	/**
-	 * Render the offer-details meta box.
+	 * Render the offer-details meta box: trigger/offer product, discount,
+	 * priority. The nonce field lives here since both meta boxes share one
+	 * save handler and one <form>.
 	 *
 	 * @param WP_Post $post Current post.
 	 */
-	public function render_meta_box( $post ) {
+	public function render_details_meta_box( $post ) {
 		wp_nonce_field( 'pp_upsell_offer_save', 'pp_upsell_offer_nonce' );
 
 		$trigger_products = get_post_meta( $post->ID, '_pp_trigger_products', true );
@@ -155,6 +178,108 @@ class PP_Upsell_CPT {
 	}
 
 	/**
+	 * Render the offer-appearance meta box: the customer-facing text and
+	 * colors used on the offer page/popup, separate from the offer-matching
+	 * details above.
+	 *
+	 * @param WP_Post $post Current post.
+	 */
+	public function render_appearance_meta_box( $post ) {
+		?>
+		<div class="pp-upsell-meta-box">
+			<p class="description"><?php esc_html_e( 'Leave any field blank to use the default text shown as its placeholder.', 'post-purchase-upsell' ); ?></p>
+			<?php
+			$defaults = PP_Upsell_Offer_Repository::get_default_copy();
+			$raw      = array();
+			foreach ( array_keys( $defaults ) as $key ) {
+				$raw[ $key ] = get_post_meta( $post->ID, '_pp_text_' . $key, true );
+			}
+			?>
+			<p class="form-field">
+				<label for="pp_text_eyebrow"><?php esc_html_e( 'Eyebrow (small text above the headline)', 'post-purchase-upsell' ); ?></label><br />
+				<input type="text" class="widefat" id="pp_text_eyebrow" name="pp_text_eyebrow" value="<?php echo esc_attr( $raw['eyebrow'] ); ?>" placeholder="<?php echo esc_attr( $defaults['eyebrow'] ); ?>" />
+			</p>
+			<p class="form-field">
+				<label for="pp_text_headline"><?php esc_html_e( 'Headline', 'post-purchase-upsell' ); ?></label><br />
+				<input type="text" class="widefat" id="pp_text_headline" name="pp_text_headline" value="<?php echo esc_attr( $raw['headline'] ); ?>" placeholder="<?php echo esc_attr( $defaults['headline'] ); ?>" />
+			</p>
+			<p class="form-field">
+				<label for="pp_text_accept"><?php esc_html_e( 'Accept button text', 'post-purchase-upsell' ); ?></label><br />
+				<input type="text" class="widefat" id="pp_text_accept" name="pp_text_accept" value="<?php echo esc_attr( $raw['accept'] ); ?>" placeholder="<?php echo esc_attr( $defaults['accept'] ); ?>" />
+				<span class="description"><?php esc_html_e( 'The price is always added automatically, e.g. "Yes, Add This (49.50)".', 'post-purchase-upsell' ); ?></span>
+			</p>
+			<p class="form-field">
+				<label for="pp_text_decline"><?php esc_html_e( 'Decline link text', 'post-purchase-upsell' ); ?></label><br />
+				<input type="text" class="widefat" id="pp_text_decline" name="pp_text_decline" value="<?php echo esc_attr( $raw['decline'] ); ?>" placeholder="<?php echo esc_attr( $defaults['decline'] ); ?>" />
+			</p>
+			<p class="form-field">
+				<label for="pp_text_note_charge"><?php esc_html_e( 'Reassurance note (card/Stripe orders)', 'post-purchase-upsell' ); ?></label><br />
+				<input type="text" class="widefat" id="pp_text_note_charge" name="pp_text_note_charge" value="<?php echo esc_attr( $raw['note_charge'] ); ?>" placeholder="<?php echo esc_attr( $defaults['note_charge'] ); ?>" />
+			</p>
+			<p class="form-field">
+				<label for="pp_text_note_cod"><?php esc_html_e( 'Reassurance note (Cash on Delivery orders)', 'post-purchase-upsell' ); ?></label><br />
+				<input type="text" class="widefat" id="pp_text_note_cod" name="pp_text_note_cod" value="<?php echo esc_attr( $raw['note_cod'] ); ?>" placeholder="<?php echo esc_attr( $defaults['note_cod'] ); ?>" />
+			</p>
+
+			<h3><?php esc_html_e( 'Colors', 'post-purchase-upsell' ); ?></h3>
+			<?php $colors = PP_Upsell_Offer_Repository::get_offer_colors( $post->ID ); ?>
+			<p class="form-field">
+				<label for="pp_color_accent"><?php esc_html_e( 'Accent color', 'post-purchase-upsell' ); ?></label><br />
+				<input type="text" class="pp-color-field" id="pp_color_accent" name="pp_color_accent" value="<?php echo esc_attr( $colors['accent'] ); ?>" data-default-color="<?php echo esc_attr( PP_Upsell_Offer_Repository::get_default_colors()['accent'] ); ?>" />
+				<span class="description"><?php esc_html_e( 'Used for the Accept button and the discounted price.', 'post-purchase-upsell' ); ?></span>
+			</p>
+			<p class="form-field">
+				<label for="pp_color_button_text"><?php esc_html_e( 'Accept button text color', 'post-purchase-upsell' ); ?></label><br />
+				<input type="text" class="pp-color-field" id="pp_color_button_text" name="pp_color_button_text" value="<?php echo esc_attr( $colors['button_text'] ); ?>" data-default-color="<?php echo esc_attr( PP_Upsell_Offer_Repository::get_default_colors()['button_text'] ); ?>" />
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render the sidebar "Offer Preview" meta box -- a live, client-side
+	 * mirror of the text/color fields above (assets/js/admin.js wires it up
+	 * on input/change, no AJAX/reload needed), against a placeholder
+	 * $100 "Sample Product" since the real offer product's price isn't
+	 * known without an extra request.
+	 *
+	 * @param WP_Post $post Current post.
+	 */
+	public function render_preview_meta_box( $post ) {
+		$copy     = PP_Upsell_Offer_Repository::get_offer_copy( $post->ID );
+		$colors   = PP_Upsell_Offer_Repository::get_offer_colors( $post->ID );
+		$settings = get_option( PP_Upsell_Main::OPTION_KEY, array() );
+		$mode     = PP_Upsell_Redirect_Controller::get_display_mode( $settings );
+		?>
+		<div class="pp-upsell-preview-tabs">
+			<button type="button" class="pp-upsell-preview-tab<?php echo 'popup' === $mode ? ' is-active' : ''; ?>" data-context="popup"><?php esc_html_e( 'Popup', 'post-purchase-upsell' ); ?></button>
+			<button type="button" class="pp-upsell-preview-tab<?php echo 'page' === $mode ? ' is-active' : ''; ?>" data-context="page"><?php esc_html_e( 'Full page', 'post-purchase-upsell' ); ?></button>
+		</div>
+		<div id="pp-upsell-preview-context" class="pp-upsell-preview-context pp-upsell-preview-context--<?php echo esc_attr( $mode ); ?>">
+		<div id="pp-upsell-preview" class="pp-upsell-preview" style="--pp-accent: <?php echo esc_attr( $colors['accent'] ); ?>; --pp-accent-text: <?php echo esc_attr( $colors['button_text'] ); ?>;">
+			<p class="pp-upsell-preview__eyebrow" id="pp-preview-eyebrow"><?php echo esc_html( $copy['eyebrow'] ); ?></p>
+			<p class="pp-upsell-preview__headline" id="pp-preview-headline"><?php echo esc_html( $copy['headline'] ); ?></p>
+			<div class="pp-upsell-preview__product">
+				<div class="pp-upsell-preview__thumb"></div>
+				<div>
+					<div class="pp-upsell-preview__name"><?php esc_html_e( 'Sample Product', 'post-purchase-upsell' ); ?></div>
+					<div class="pp-upsell-preview__price">
+						<span class="pp-upsell-preview__price-regular" id="pp-preview-price-regular">$100.00</span>
+						<span class="pp-upsell-preview__price-final" id="pp-preview-price-final">$100.00</span>
+					</div>
+				</div>
+			</div>
+			<button type="button" class="pp-upsell-preview__accept" id="pp-preview-accept"><?php echo esc_html( $copy['accept'] ); ?> ($100.00)</button>
+			<p class="pp-upsell-preview__decline" id="pp-preview-decline"><?php echo esc_html( $copy['decline'] ); ?></p>
+			<p class="pp-upsell-preview__note" id="pp-preview-note"><?php echo esc_html( $copy['note_charge'] ); ?></p>
+		</div>
+		</div>
+		<p class="description"><?php esc_html_e( 'Updates live as you edit the fields above. Uses a placeholder $100 sample price -- the real price depends on the offer product you pick.', 'post-purchase-upsell' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Popup and Full page share the same card design -- the difference is just how the customer reaches it (an overlay on your normal Thank You page, vs. being sent to a dedicated page). Switch the tabs above to see both; the Settings page controls which one is actually used.', 'post-purchase-upsell' ); ?></p>
+		<?php
+	}
+
+	/**
 	 * Persist the meta box fields.
 	 *
 	 * @param int $post_id Post ID.
@@ -190,6 +315,18 @@ class PP_Upsell_CPT {
 
 		$priority = isset( $_POST['pp_priority'] ) ? absint( $_POST['pp_priority'] ) : 10;
 		update_post_meta( $post_id, '_pp_priority', $priority );
+
+		foreach ( array_keys( PP_Upsell_Offer_Repository::get_default_copy() ) as $key ) {
+			$field = 'pp_text_' . $key;
+			$value = isset( $_POST[ $field ] ) ? sanitize_text_field( wp_unslash( $_POST[ $field ] ) ) : '';
+			update_post_meta( $post_id, '_pp_text_' . $key, $value );
+		}
+
+		foreach ( array_keys( PP_Upsell_Offer_Repository::get_default_colors() ) as $key ) {
+			$field = 'pp_color_' . $key;
+			$value = isset( $_POST[ $field ] ) ? sanitize_hex_color( wp_unslash( $_POST[ $field ] ) ) : '';
+			update_post_meta( $post_id, '_pp_color_' . $key, (string) $value );
+		}
 	}
 
 	/**
@@ -209,6 +346,9 @@ class PP_Upsell_CPT {
 				$new['pp_offer_product']    = __( 'Offer Product', 'post-purchase-upsell' );
 				$new['pp_discount']         = __( 'Discount', 'post-purchase-upsell' );
 				$new['pp_priority']         = __( 'Priority', 'post-purchase-upsell' );
+				$new['pp_views']            = __( 'Views', 'post-purchase-upsell' );
+				$new['pp_accepted']         = __( 'Accepted', 'post-purchase-upsell' );
+				$new['pp_conversion']       = __( 'Conversion', 'post-purchase-upsell' );
 			}
 		}
 
@@ -258,6 +398,35 @@ class PP_Upsell_CPT {
 			case 'pp_priority':
 				echo esc_html( get_post_meta( $post_id, '_pp_priority', true ) );
 				break;
+
+			case 'pp_views':
+				echo esc_html( number_format_i18n( $this->get_offer_stats( $post_id )['views'] ) );
+				break;
+
+			case 'pp_accepted':
+				echo esc_html( number_format_i18n( $this->get_offer_stats( $post_id )['accepted'] ) );
+				break;
+
+			case 'pp_conversion':
+				echo esc_html( $this->get_offer_stats( $post_id )['conversion_rate'] ) . '%';
+				break;
 		}
+	}
+
+	/**
+	 * Per-request memoization -- each list-table row renders three stat
+	 * columns, and without this each would run its own SUM() query.
+	 *
+	 * @param int $post_id Offer post id.
+	 * @return array
+	 */
+	private function get_offer_stats( $post_id ) {
+		static $cache = array();
+
+		if ( ! isset( $cache[ $post_id ] ) ) {
+			$cache[ $post_id ] = PP_Upsell_Analytics::get_summary_for_offer( $post_id );
+		}
+
+		return $cache[ $post_id ];
 	}
 }
